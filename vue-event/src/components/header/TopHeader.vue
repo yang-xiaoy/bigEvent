@@ -18,16 +18,32 @@
             <el-dropdown-item icon="el-icon-circle-check">蚵仔煎</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <span class="loginOut">退出</span>
+        <span class="loginOut" @click="loginOutHandel()"><i class="el-icon-switch-button"></i>退出</span>
       </div>
     </el-header>
   </div>
 </template>
 
 <script>
-// import { } from '@element-plus/icons-vue'
 export default {
-
+  methods: {
+    loginOutHandel() {
+      this.$confirm('确定退出登录吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$store.commit('updateToken', '')
+        this.$router.push('/login')
+        this.$message({
+          type: 'success',
+          message: '退出成功!'
+        })
+      }).catch(() => {
+        return false
+      })
+    }
+  }
 }
 </script>
 
@@ -71,6 +87,11 @@ export default {
     .loginOut {
       margin: 0 20px 0 30px;
       cursor: pointer;
+
+      i {
+        margin-right: 5px;
+        vertical-align: middle;
+      }
     }
   }
 }
