@@ -6,18 +6,21 @@
         <span class="icnMenu"><i class="el-icon-menu"></i></span>
       </div>
       <div class="userInfo">
+        <!-- avatar图像 -->
+        <el-avatar :size="40" :src="circleUrl"></el-avatar>
+
+        <!-- 个人中心 -->
         <el-dropdown>
           <span class="el-dropdown-link">
             个人中心<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item icon="el-icon-plus">黄金糕</el-dropdown-item>
-            <el-dropdown-item icon="el-icon-circle-plus">狮子头</el-dropdown-item>
-            <el-dropdown-item icon="el-icon-circle-plus-outline">螺蛳粉</el-dropdown-item>
-            <el-dropdown-item icon="el-icon-check">双皮奶</el-dropdown-item>
-            <el-dropdown-item icon="el-icon-circle-check">蚵仔煎</el-dropdown-item>
+            <el-dropdown-item icon="el-icon-tickets">基本资料</el-dropdown-item>
+            <el-dropdown-item icon="el-icon-picture-outline">更换头像</el-dropdown-item>
+            <el-dropdown-item icon="el-icon-unlock">重置密码</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
+        <!-- 退出登录 -->
         <span class="loginOut" @click="loginOutHandel()"><i class="el-icon-switch-button"></i>退出</span>
       </div>
     </el-header>
@@ -26,6 +29,11 @@
 
 <script>
 export default {
+  data() {
+    return {
+      circleUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
+    }
+  },
   methods: {
     loginOutHandel() {
       this.$confirm('确定退出登录吗?', '提示', {
@@ -67,13 +75,20 @@ export default {
     }
 
     .icnMenu {
-      vertical-align: middle;
       cursor: pointer;
       font-size: 18px;
     }
   }
 
   .userInfo {
+    display: flex;
+    justify-content: space-between;
+
+    // ::v-deep el-avatar--circle {}
+    .el-avatar {
+      margin: 10px 10px 0 0;
+    }
+
     .el-dropdown-link {
       cursor: pointer;
       color: #fff;
