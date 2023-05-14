@@ -121,7 +121,6 @@ export default {
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-    // box-shadow: 1px -1px 1px rgba(23, 36, 44, .2), -1px 2px 1px rgba(0, 0, 0, .2);
 
     .title {
       font-size: 22px;

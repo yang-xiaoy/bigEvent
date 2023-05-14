@@ -25,6 +25,7 @@
 
 <script>
 import { loginAPI } from '@/api/index.js'
+import { mapMutations } from 'vuex'
 export default {
   name: 'index',
   data() {
@@ -57,6 +58,8 @@ export default {
   },
 
   methods: {
+    // 映射
+    ...mapMutations(['updateToken']),
     /**
      * 登录事件处理函数
      */
@@ -71,9 +74,10 @@ export default {
             // 2. 登录失败
             return this.$message.error(res.message)
           }
-          // 3. 登录成功
-          return this.$message.success(res.message)
-          // 4. 跳转页面
+          // 3. 登录成功，先存储token，保存到vuex中
+          this.updateToken(res.token)
+          this.$message.success(res.message)
+          this.$router.push('/home')
         } else {
           // 验证不通过
           return false
@@ -100,7 +104,7 @@ export default {
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-    // box-shadow: 1px -1px 1px rgba(23, 36, 44, .2), -1px 2px 1px rgba(0, 0, 0, .2);
+
   }
 
   .title {
