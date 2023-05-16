@@ -7,7 +7,8 @@
       </div>
       <div class="userInfo">
         <!-- avatar图像 -->
-        <el-avatar :size="40" :src="circleUrl"></el-avatar>
+        <el-avatar :size="40" v-if="user_pic" :src="user_pic"></el-avatar>
+        <el-avatar :size="40" v-else :src="circleUrl"></el-avatar>
 
         <!-- 个人中心 -->
         <el-dropdown>
@@ -28,6 +29,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
@@ -41,7 +43,9 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        // 退出登录，清除token和用户信息
         this.$store.commit('updateToken', '')
+        this.$store.commit('updateUserInfo', {})
         this.$router.push('/login')
         this.$message({
           type: 'success',
@@ -51,6 +55,9 @@ export default {
         return false
       })
     }
+  },
+  computed: {
+    ...mapGetters(['username', 'nickname', 'user_pic'])
   }
 }
 </script>

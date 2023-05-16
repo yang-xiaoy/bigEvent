@@ -1,4 +1,6 @@
 import request from '@/utils/request.js'
+// 引入 store 对象
+import store from '@/store/index.js'
 
 /**
  * 注册用户API
@@ -29,6 +31,37 @@ export const loginAPI = ({ username, password }) => {
     data: {
       username,
       password
+    }
+  })
+}
+
+/**
+ * 获取用户信息，存储到vuex中
+ * @returns
+ */
+export const getUserInfoAPI = () => {
+  return request({
+    url: '/my/userinfo',
+    // 传参给后台三种情况：
+    // 1. 传请求头，使用header
+    // 2. params，传查询字符串query
+    // 3. data，body请求体
+    headers: {
+      // 注意：在这个位置不能使用 this.$store.state.token，因为this.$store的this指的是组件的对象，现在这里是js。
+      Authorization: store.state.token
+    }
+  })
+}
+
+/**
+ * 请求菜单数据
+ * @returns
+ */
+export const getMenuListAPI = () => {
+  return request({
+    url: '/my/menus',
+    headers: {
+      Authorization: store.state.token
     }
   })
 }

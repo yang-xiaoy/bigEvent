@@ -13,7 +13,7 @@ export default {
 <style lang="less" scoped>
 .el-footer {
   background-color: #409EFF;
-  color: #333;
+  color: #fff;
   text-align: center;
   line-height: 60px;
 }
