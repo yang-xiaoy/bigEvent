@@ -29,15 +29,27 @@ const router = new VueRouter({
   routes
 })
 
+const whiteList = ['/login', '/reg']
 // 全局路由导航守卫
 router.beforeEach((to, from, next) => {
   const token = store.state.token
-  if (token && !store.state.userInfo.username) {
-    // 本地有token值了，才回去请求用户信息
-    // 这个位置还是不太懂，dispatch这个函数是干啥的，为什么要在这个位置调用用户信息呢？
-    this.$store.dispatch('getUserInfoAction')
+  // 有token就证明登录了，否则就未登录
+  if (token) {
+    if (token && !store.state.userInfo.username) {
+      // 本地有token值了，才回去请求用户信息
+      // 这个位置还是不太懂，dispatch这个函数是干啥的，为什么要在这个位置调用用户信息呢？
+      store.dispatch('getUserInfoAction')
+    }
+    next()
+  } else {
+    if (whiteList.includes(to.path)) {
+      // 未登录可以访问的路由地址，则放行（路由全局前置守卫不会再次触发了，而是匹配路由表）
+      next()
+    } else {
+      // 没有登录强制跳转到登录页面
+      next('/login')
+    }
   }
-  next()
 })
 
 export default router
