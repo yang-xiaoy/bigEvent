@@ -7,7 +7,9 @@
         <!-- 引用Aside组件 -->
         <LeftAside></LeftAside>
         <el-container direction="vertical">
-          <el-main>Main</el-main>
+          <el-main>
+            <router-view />
+          </el-main>
           <!-- 引用footer组件 -->
           <ButtomFooter></ButtomFooter>
         </el-container>

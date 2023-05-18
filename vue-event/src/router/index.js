@@ -1,6 +1,7 @@
 import store from '@/store'
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+// import RouterConfig from './config'
 
 Vue.use(VueRouter)
 
@@ -10,16 +11,23 @@ const routes = [
     redirect: '/login'
   },
   {
+    path: '/',
+    component: () => import('@/views/home/home.vue'),
+    redirect: '/home',
+    children: [
+      {
+        path: '/home',
+        component: () => import('@/views/mains/mains.vue')
+      }
+    ]
+  },
+  {
     path: '/register',
-    component: () => import('@/views/register/index.vue')
+    component: () => import('@/views/register/register.vue')
   },
   {
     path: '/login',
-    component: () => import('@/views/login/index.vue')
-  },
-  {
-    path: '/home',
-    component: () => import('@/views/home/index.vue')
+    component: () => import('@/views/login/login.vue')
   }
 ]
 
@@ -29,7 +37,7 @@ const router = new VueRouter({
   routes
 })
 
-const whiteList = ['/login', '/reg']
+const whiteList = ['/login', '/register']
 // 全局路由导航守卫
 router.beforeEach((to, from, next) => {
   const token = store.state.token
@@ -41,6 +49,7 @@ router.beforeEach((to, from, next) => {
       store.dispatch('getUserInfoAction')
     }
     next()
+    // configRouter()
   } else {
     if (whiteList.includes(to.path)) {
       // 未登录可以访问的路由地址，则放行（路由全局前置守卫不会再次触发了，而是匹配路由表）
@@ -51,5 +60,17 @@ router.beforeEach((to, from, next) => {
     }
   }
 })
+
+/**
+ * 定义遍历路由函数
+ * 这个位置我是想采用遍历子路由的方式，将子路由追加到父组件中
+ */
+// const configRouter = () => {
+//   // 遍历子路由（config.js文件中配置的子路由）
+//   RouterConfig.forEach((item) => {
+//     // 使用router.addRoute()方法，添加子路由给home组件
+//     router.addRoute('home', item)
+//   })
+// }
 
 export default router
