@@ -34,11 +34,11 @@ export default {
 
 <style lang="less" scoped>
 .home_container {
-  color: #fff;
+  color: #f2f2f2;
 }
 
 .el-main {
-  background-color: #fff;
+  background-color: #f2f2f2;
   color: #333;
   text-align: center;
   height: 100%;

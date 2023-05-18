@@ -70,6 +70,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.side_container {
+  height: 100vh;
+}
+
 .el-avatar {
   margin: 30px 0 0 0;
 }

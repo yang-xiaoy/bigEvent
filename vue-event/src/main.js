@@ -5,6 +5,7 @@ import store from './store'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import '@/assets/global.less'
+import '@/assets/resize.css'
 ElementUI.Dialog.props.lockScroll.default = false
 
 // 注意：在这里需要使用ElementUI框架
