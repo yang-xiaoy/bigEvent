@@ -18,6 +18,10 @@ const routes = [
       {
         path: '/home',
         component: () => import('@/views/mains/mains.vue')
+      },
+      {
+        path: 'user-info',
+        component: () => import('@/views/user/userinfo.vue')
       }
     ]
   },

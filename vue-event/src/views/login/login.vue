@@ -110,6 +110,7 @@ export default {
     font-size: 22px;
     // color: #5297ae;
     color: #223442;
+    margin: 30px 0;
   }
 
   .el-form {
@@ -123,6 +124,11 @@ export default {
       float: left;
       color: #409EFF;
     }
+
+    :deep .el-input__inner {
+      font-size: 16px;
+    }
+
   }
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="side_container">
     <el-aside width="210px" class="el-menu">
-      <el-menu default-active="/home" class="el-menu-vertical-demo" background-color="#fff" text-color="#000"
+      <el-menu :default-active="$route.path" class="el-menu-vertical-demo" background-color="#fff" text-color="#000"
         active-text-color="#409EFF" unique-opened router>
         <!-- userinfo -->
         <div class="user_info">
