@@ -4,18 +4,20 @@
       <div slot="header" class="title">
         <span>卡片名称</span>
       </div>
-      <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+
+      <el-form :model="userForm" status-icon :rules="userFormRules" ref="userFormRef" label-width="100px"
+        class="demo-ruleForm">
         <!-- 用户名 -->
         <el-form-item label="用户名" prop="username">
-          <el-input type="username" :v-model="username" :value="username" disabled autocomplete="off"></el-input>
+          <el-input type="username" v-model="username" disabled autocomplete="off"></el-input>
         </el-form-item>
         <!-- 用户密码 -->
-        <el-form-item label="昵称" prop="usernike">
-          <el-input type="usernike" v-model="ruleForm.usernike" autocomplete="off"></el-input>
+        <el-form-item label="昵称" prop="nickname">
+          <el-input type="nickname" v-model="userForm.nickname" autocomplete="off"></el-input>
         </el-form-item>
         <!-- 用户邮箱 -->
         <el-form-item label="邮箱" prop="email">
-          <el-input type="email" v-model="ruleForm.email" autocomplete="off"></el-input>
+          <el-input type="email" v-model="userForm.email" autocomplete="off"></el-input>
         </el-form-item>
         <!-- 操作按钮 -->
         <el-form-item>
@@ -29,15 +31,16 @@
 
 <script>
 import store from '@/store'
+import { updateUserInfoAPI } from '@/api/index.js'
 export default {
   data() {
     return {
-      ruleForm: {
+      userForm: {
         username: '',
-        usernike: '',
+        nickname: '',
         email: ''
       },
-      rules: {
+      userFormRules: {
         usernike: [
           { required: true, message: '请输入用户昵称', trigger: 'blur' }
         ],
@@ -49,19 +52,29 @@ export default {
     }
   },
   methods: {
-    submitForm(formName) {
-      this.$refs[formName].validate((valid) => {
+    submitForm() {
+      this.$refs.userFormRef.validate(async (valid) => {
         if (valid) {
-          alert('submit!')
+          // console.log(this.userForm)
+          this.userForm.id = this.$store.state.userInfo.id
+          const { data: res } = await updateUserInfoAPI(this.userForm)
+          if (res.code !== 0) {
+            return this.$message.error('更新用户信息失败！')
+          } else {
+            this.$message.success('更新用户信息成功！')
+            // 重新让vuex获取一下最新数据
+            // this.$store.dispatch('initUserInfo')
+          }
+          console.log(res)
         } else {
-          console.log('error submit!!')
           return false
         }
       })
-      console.log(store)
     },
-    resetForm(formName) {
-      this.$refs[formName].resetFields()
+    resetForm() {
+      console.log(1)
+      this.userForm.nickname = ''
+      this.userForm.email = ''
     }
   },
   created() {

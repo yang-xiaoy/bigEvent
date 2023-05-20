@@ -66,6 +66,29 @@ export const getMenuListAPI = () => {
   })
 }
 
+/**
+ * 更新用户信息
+ */
+export const updateUserInfoAPI = ({
+  id,
+  username,
+  nickname,
+  email,
+  user_pic
+}) => {
+  return request({
+    url: '/my/userinfo',
+    method: 'PUT',
+    data: {
+      id,
+      username,
+      nickname,
+      email,
+      user_pic
+    }
+  })
+}
+
 // export const getListAPI = () => {
 //   return request({
 //     url: 'http://geek.itheima.net/v1_0/channels'
