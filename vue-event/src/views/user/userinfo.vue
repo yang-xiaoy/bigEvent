@@ -72,9 +72,11 @@ export default {
       })
     },
     resetForm() {
-      console.log(1)
-      this.userForm.nickname = ''
-      this.userForm.email = ''
+      // this.userForm.nickname = ''
+      // this.userForm.email = ''
+      // el-from提供了一个重置表单（并且还能重置报错的提示）
+      // resetFields()是固定的
+      this.$refs.userFormRef.resetFields()
     }
   },
   created() {
