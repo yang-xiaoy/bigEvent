@@ -103,6 +103,23 @@ export const updataUserAvatarAPI = (avatar) => {
   })
 }
 
+/**
+ * 修改用户密码
+ * @param {*} param0
+ * @returns
+ */
+export const updatePwdAPI = ({ old_pwd, new_pwd, re_pwd }) => {
+  return request({
+    url: '/my/updatepwd',
+    method: 'PATCH',
+    data: {
+      old_pwd,
+      new_pwd,
+      re_pwd
+    }
+  })
+}
+
 // export const getListAPI = () => {
 //   return request({
 //     url: 'http://geek.itheima.net/v1_0/channels'

@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import { updatePwdAPI } from '@/api/index.js'
 export default {
   data() {
     // 新密码和旧密码不能一样
@@ -87,7 +88,25 @@ export default {
     }
   },
   methods: {
-    submitForm() { },
+    submitForm() {
+      this.$refs.passwordFormRef.validate(async valid => {
+        if (valid) {
+          const { data: res } = await updatePwdAPI(this.passwordForm)
+          if (res.code !== 0) {
+            return this.$message.error('更新密码失败！')
+          }
+          this.$message.success('更新密码成功！')
+          this.$refs.passwordFormRef.resetFields()
+          // 清空vuex信息
+          this.$store.commit('updateToken', '')
+          this.$store.commit('updateUserInfo', {})
+          // 退出，跳转到登录页
+          this.$router.push('/login')
+        } else {
+          return false
+        }
+      })
+    },
     // 重置表单
     resetForm() {
       this.$refs.passwordFormRef.resetFields()
