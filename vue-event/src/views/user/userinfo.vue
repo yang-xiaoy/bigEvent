@@ -63,7 +63,7 @@ export default {
           } else {
             this.$message.success('更新用户信息成功！')
             // 重新让vuex获取一下最新数据
-            // this.$store.dispatch('initUserInfo')
+            this.$store.dispatch('getUserInfoAction')
           }
           console.log(res)
         } else {

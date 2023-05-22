@@ -89,6 +89,20 @@ export const updateUserInfoAPI = ({
   })
 }
 
+/**
+ * 更新用户图像
+ * @returns
+ */
+export const updataUserAvatarAPI = (avatar) => {
+  return request({
+    url: '/my/update/avatar',
+    method: 'PATCH',
+    data: {
+      avatar
+    }
+  })
+}
+
 // export const getListAPI = () => {
 //   return request({
 //     url: 'http://geek.itheima.net/v1_0/channels'

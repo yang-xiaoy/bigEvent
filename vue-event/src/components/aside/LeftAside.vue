@@ -45,6 +45,7 @@ export default {
   },
   computed: {
     ...mapGetters(['username', 'nickname', 'user_pic'])
+
   },
   methods: {
     // methods: {
@@ -60,11 +61,16 @@ export default {
       const res = await getMenuListAPI()
       this.menus = res.data.data
       console.log(res)
+    },
+    test() {
+      console.log(this.username)
+      console.log(this.user_pic)
     }
   },
   created() {
     // 获取侧边栏数据
     this.getMenuListFn()
+    this.test()
   }
 }
 </script>

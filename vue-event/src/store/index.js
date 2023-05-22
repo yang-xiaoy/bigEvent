@@ -13,17 +13,14 @@ export default new Vuex.Store({
     userInfo: {}
   },
   getters: {
+    // username(state) {
+    //   return state.userInfo.username
+    // },
+
     // 简写的形式
-    // username: state => state.userInfo.username
-    username(state) {
-      return state.userInfo.username
-    },
-    nickname(state) {
-      return state.userInfo.nickname
-    },
-    user_pic(state) {
-      return state.userInfo.user_pic
-    }
+    username: (state) => state.userInfo.username,
+    nickname: (state) => state.userInfo.nickname,
+    user_pic: (state) => state.userInfo.user_pic
   },
   mutations: {
     // 2. 更新token的mutations函数
