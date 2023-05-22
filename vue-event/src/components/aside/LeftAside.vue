@@ -60,8 +60,9 @@ export default {
     async getMenuListFn() {
       const res = await getMenuListAPI()
       this.menus = res.data.data
-      console.log(res)
+      // console.log(res)
     },
+    // 测试 vuex 里面的用户信息
     test() {
       console.log(this.username)
       console.log(this.user_pic)
@@ -70,7 +71,7 @@ export default {
   created() {
     // 获取侧边栏数据
     this.getMenuListFn()
-    this.test()
+    // this.test()
   }
 }
 </script>

@@ -41,7 +41,7 @@ export default {
       } else {
         // console.log(1)
         // 证明它选择了文件，默认只能选一个，如果选择多个你需要给input标签加额外原生属性
-        console.log(files[0])
+        // console.log(files[0])
         // 目标：选择的图片文件，要给到img标签做纯前端的预览
         // img的src属性值只能是下面两种情况：
         // 方式一：只能是图片的"链接地址"（外链：http://开头，图片文件相对路径）
