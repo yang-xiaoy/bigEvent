@@ -120,6 +120,16 @@ export const updatePwdAPI = ({ old_pwd, new_pwd, re_pwd }) => {
   })
 }
 
+/**
+ * 获取文章分类，默认请求类型get
+ * @returns
+ */
+export const getArtCateListAPI = () => {
+  return request({
+    url: '/my/cate/list'
+  })
+}
+
 // export const getListAPI = () => {
 //   return request({
 //     url: 'http://geek.itheima.net/v1_0/channels'
