@@ -130,6 +130,22 @@ export const getArtCateListAPI = () => {
   })
 }
 
+/**
+ * 新增文章分类
+ * @param {*} param0
+ * @returns
+ */
+export const addArtCateAPI = ({ cate_name, cate_alias }) => {
+  return request({
+    url: '/my/cate/add',
+    method: 'POST',
+    data: {
+      cate_name,
+      cate_alias
+    }
+  })
+}
+
 // export const getListAPI = () => {
 //   return request({
 //     url: 'http://geek.itheima.net/v1_0/channels'
