@@ -5,7 +5,7 @@ import request from '@/utils/request.js'
 /**
  * 注册用户API
  * @param {*} param0
- * @returns
+ * @returns promise 对象
  */
 export const registerAPI = ({ username, password, repassword }) => {
   return request({
@@ -22,7 +22,7 @@ export const registerAPI = ({ username, password, repassword }) => {
 /**
  * 用户登录API
  * @param {*} param0
- * @returns
+ * @returns promise 对象
  */
 export const loginAPI = ({ username, password }) => {
   return request({
@@ -37,7 +37,7 @@ export const loginAPI = ({ username, password }) => {
 
 /**
  * 获取用户信息，存储到vuex中
- * @returns
+ * @returns promise 对象
  */
 export const getUserInfoAPI = () => {
   return request({
@@ -55,7 +55,7 @@ export const getUserInfoAPI = () => {
 
 /**
  * 请求菜单数据
- * @returns
+ * @returns promise 对象
  */
 export const getMenuListAPI = () => {
   return request({
@@ -67,7 +67,9 @@ export const getMenuListAPI = () => {
 }
 
 /**
- * 更新用户信息
+ *  更新用户信息
+ * @param {*} param0
+ * @returns promise 对象
  */
 export const updateUserInfoAPI = ({
   id,
@@ -90,8 +92,9 @@ export const updateUserInfoAPI = ({
 }
 
 /**
- * 更新用户图像
- * @returns
+ * 更新用户头像
+ * @param {*} avatar : 用户头像
+ * @returns promise 对象
  */
 export const updataUserAvatarAPI = (avatar) => {
   return request({
@@ -105,8 +108,8 @@ export const updataUserAvatarAPI = (avatar) => {
 
 /**
  * 修改用户密码
- * @param {*} param0
- * @returns
+ * @param {*} param0 { old_pwd：原密码, new_pwd:新密码, re_pwd:确认新密码 }
+ * @returns promise 对象
  */
 export const updatePwdAPI = ({ old_pwd, new_pwd, re_pwd }) => {
   return request({
@@ -122,7 +125,7 @@ export const updatePwdAPI = ({ old_pwd, new_pwd, re_pwd }) => {
 
 /**
  * 获取文章分类，默认请求类型get
- * @returns
+ * @returns promise 对象
  */
 export const getArtCateListAPI = () => {
   return request({
@@ -132,8 +135,8 @@ export const getArtCateListAPI = () => {
 
 /**
  * 新增文章分类
- * @param {*} param0
- * @returns
+ * @param {*} param0 { cate_name:文章分类名称, cate_alias:文章分类别名 }
+ * @returns promise 对象
  */
 export const addArtCateAPI = ({ cate_name, cate_alias }) => {
   return request({
@@ -146,8 +149,34 @@ export const addArtCateAPI = ({ cate_name, cate_alias }) => {
   })
 }
 
-// export const getListAPI = () => {
-//   return request({
-//     url: 'http://geek.itheima.net/v1_0/channels'
-//   })
-// }
+/**
+ * 修改文章分类
+ * @param {*} param0 { id:文章分类ID, cate_name:文章分类名称, cate_alias:文章分类别名 }
+ * @returns promise 对象
+ */
+export const updateArtCateAPI = ({ id, cate_name, cate_alias }) => {
+  return request({
+    url: '/my/cate/info',
+    method: 'PUT',
+    data: {
+      id,
+      cate_name,
+      cate_alias
+    }
+  })
+}
+
+/**
+ * 删除文章分类
+ * @param {*} id 文章分类id
+ * @returns promise 对象
+ */
+export const deleteArtCateAPI = (id) => {
+  return request({
+    url: '/my/cate/del',
+    method: 'DELETE',
+    params: {
+      id
+    }
+  })
+}
