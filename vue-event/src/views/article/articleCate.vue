@@ -21,6 +21,36 @@
       </el-table>
     </el-card>
     <!-- 添加文章分类的对话框 -->
+    <!--
+      编辑文章分类和添加文章分类使用的是同一个dialog框。
+      Bug：el-form和el-dialog和数据回显，同时使用，就会出现Bug。
+        1. Bug复现：开发（先进行数据添加，不会出现任何问题），测试（新进行数据修改，再添加，发现输入框里面有值）
+        2. 原因：点击修改后，关闭对话框的时候，置空失效（置空输入框失效）。
+        3. 具体分析：主人公resetFilelds有问题。
+        4. 线索支持：
+          1）. Dialog 的内容是懒渲染的，即在第一次被打开之前，传入的默认值slot不会被渲染到DOM上，第二次后续只是做css的显示和隐藏。
+          2）. vue 数据改变（先执行所有同步）再去更新DOM（异步代码）。
+        5. 无问题：第一次打开网页，先点击新增按钮 ——> dialog出现 ——> el-form组件第一次挂载（关联addForm对象属性值为空字符串）
+           el-form组件内绑定了初始值，所以后续调用resetFileds的时候，它可以用到空字符串值来初始值来重置。
+        6. 有问题：第一次打开网页，先点击修改按钮 ——> 虽然dialog值为 true 了，但是同步代码把 addForm 对象里赋值了（默认值）——>
+           DOM更新异步 ——> dialog出现 ——> el-form组件第一次挂载（使用addForm内置做回显，然后第一次el-form内绑定了初始值（有值的））
+           ——> 以后做的重置，它就用绑定的带值的做的重置。
+      解决方案：
+        1. 让数据回显慢点执行。
+
+        让el-dialog第一次挂载el-form时，先用addForm空字符串初始值绑定到内部，后续用作 resetFileds 重置。
+        所以让真实的DOM先创建并在内部绑定好"复制"好初始值
+
+        接着我们真实DOM更新好后绑定好了，咱们再给数据做回显。
+
+        注意：我们给v-model对象赋值只是影响当前显示的值，不会影响到resetFileds复制的初始值
+
+        this.$nextTick(() => {
+        // 数据回显（回填）
+        this.addCateForm.cate_name = obj.cate_name
+        this.addCateForm.cate_alias = obj.cate_alias
+      })
+      -->
     <el-dialog :title="isEdit ? '编辑文章分类' : '添加文章分类'" :visible.sync="dialogFormVisible" @close="dialogCloseFn">
       <el-form :model="addCateForm" :rules="addCateRules" ref="addCateForm">
         <el-form-item label="分类名称" prop="cate_name" :label-width="formLabelWidth">
@@ -54,12 +84,21 @@ export default {
       // 表单数据对象校验规则
       addCateRules: {
         cate_name: [
-          { required: true, message: '请添加文章分类', trigger: 'blur' }
+          { required: true, message: '请添加文章分类', trigger: 'blur' },
+          { pattren: /^\S{1,10}$/, message: '分类名必须是1-10位的非空字符串', trigger: 'bulr' }
         ],
         cate_alias: [
-          { required: true, message: '请添加分类别名', trigger: 'blur' }
+          { required: true, message: '请添加分类别名', trigger: 'blur' },
+          { pattren: /^[a-zA-Z0-9]{1,15}$/, message: '分类名必须是1-15位的字母数字', trigger: 'bulr' }
         ]
       },
+      /**
+       * 经验：如果用同一个按钮，想要做状态区分
+       *  1. 定义一个标记变量isEdit（true：编辑，false：新增），还要定义本次要编辑的数据唯一id值，editId。
+       *  2. 在点击修改的时候，isEdit改为true，editId保存要求改的数据id。
+       *  3. 在点击新增按钮的时候，isEdit改为false，editId置空。
+       *  4. 在点击保存按钮时（确定按钮时），就可以用isEdit变量做区分了。
+       */
       isEdit: false, // true为编辑状态，false为新增状态
       editId: '' // 保存正在要编辑的数据id值
     }

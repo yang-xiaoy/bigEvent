@@ -1,6 +1,6 @@
 <template>
   <div class="artList_container">
-    <!-- 文章列表展示 -->
+    <!-- 文章列表展示 el-form -->
     <el-card class="box-card">
       <div slot="header" class="title">
         <span>文章列表</span>
@@ -28,19 +28,27 @@
         </el-form-item>
       </el-form>
     </el-card>
-    <!-- 发布文章 -->
-    <el-dialog :title="isEdit ? '编辑分类' : '发布文章'" :visible.sync="pubDialogVisible" fullscreen :before-close="handleColse">
-      <el-form :model="addCateForm" :rules="addCateRules" ref="addCateForm">
-        <!-- <el-form-item label="分类名称" prop="cate_name" :label-width="formLabelWidth">
-          <el-input v-model="addCateForm.cate_name" autocomplete="off"></el-input>
-        </el-form-item> -->
-        <!-- <el-form-item label="分类别名" prop="cate_alias" :label-width="formLabelWidth">
-          <el-input v-model="addCateForm.cate_alias" autocomplete="off"></el-input>
-        </el-form-item> -->
+
+    <!-- 发布文章 dialog -->
+    <el-dialog title="发布文章" :visible.sync="pubDialogVisible" fullscreen :before-close="handleColse">
+      <el-form :model="pubForm" :rules="pubFormRules" ref="pubFormRef">
+        <!-- 文章名称 -->
+        <el-form-item label="文章标题" prop="title" :label-width="formLabelWidth">
+          <el-input v-model="pubForm.title" placeholder="请输入文章标题" autocomplete="off"></el-input>
+        </el-form-item>
+        <!-- 文章分类 -->
+        <el-form-item label="文章分类" prop="cate_id" :label-width="formLabelWidth">
+          <el-select v-model="pubForm.cate_id" placeholder="请选择分类" style="width:100%">
+            <el-option label="区域一" value="shanghai"></el-option>
+            <el-option label="区域二" value="beijing"></el-option>
+          </el-select>
+        </el-form-item>
+
       </el-form>
+
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelFn">取 消</el-button>
         <el-button type="primary" @click="commitFn">确 定</el-button>
+        <el-button @click="cancelFn">取 消</el-button>
       </div>
     </el-dialog>
   </div>
@@ -54,17 +62,17 @@ export default {
         user: '',
         region: ''
       },
-      addCateForm: {
-        cate_name: '',
-        cate_alias: ''
+      pubForm: {
+        title: '',
+        cate_id: ''
       },
       // 表单数据对象校验规则
-      addCateRules: {
-        cate_name: [
-          { required: true, message: '请添加文章分类', trigger: 'blur' }
+      pubFormRules: {
+        title: [
+          { required: true, message: '请输入文章标题', trigger: 'blur' }
         ],
-        cate_alias: [
-          { required: true, message: '请添加分类别名', trigger: 'blur' }
+        cate_id: [
+          { required: true, message: '请选择文章分类', trigger: 'blur' }
         ]
       },
       isEdit: false, // true为编辑状态，false为新增状态
@@ -87,17 +95,27 @@ export default {
     },
     // 发布文章--->对话框关闭前的回调
     // 注意：dialog自带的点右上角的X，和按下esc，和点击半透明蒙层关闭才会走这里，以及你自己设置的点击visible对应变量为false，都会导致关闭前的回调触发
-    handleColse(done) { // done的作用：调用就会关闭的对话框
-      const confirmResult = this.$confirm('此操作将导致文章丢失，是否继续？', '提示', {
+    async handleColse(done) { // done的作用：调用就会关闭的对话框
+      // $confirm内部虽然是一个确认的提示框，但是它借用了Promise语法来管理，点击确定它的状态为兑现成功状态返回'confirm',如果用户点击取消按钮，
+      // 此Promise对象状态为拒绝状态，返回'calcel'字符串。
+      const confirmResult = await this.$confirm('此操作将导致文章丢失，是否继续？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).catch(err => err)
       // 取消了关闭，阻止住，什么都不干
-      if (confirmResult === 'cancel') {
-        // 确认关闭
-        return done()
-      }
+      if (confirmResult === 'cancel') return
+      // 确认关闭
+      done()
+      // 知识点回顾：
+      // 1. await 只能用在被 async 修饰的函数内。async修饰：就是在当前函数名左边加async关键字，如果没有函数名，就在形参的左边加 async 关键字。
+      // 原因：因为async修饰的函数就是异步函数，如果此函数被调用，总是返回一个全新的Promise对象，而且本次函数调用因为是异步函数，
+      // 所以外面的同步代码继续执行，而且await暂停代码只能暂停async函数内的,等待await后面异步结果。
+
+      // 2. await只能拿到成功的结果并放心往下走，如果失败内部会向浏览器控制台抛出错误并不会让await往下走代码。
+      // 3. await后面的Promise的对象的拒绝状态（错误）如何捕获呢？
+      //  方法一：使用 try{} catch{err}
+      //  方法二：使用 promise 的链式调用，而且在catch里return的非Promise拒绝状态对象值，都会当作成功的结果返回给原地新的Promise对象结果。
     },
     cancelFn() {
       console.log('222')
