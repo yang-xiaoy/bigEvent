@@ -5,27 +5,32 @@
       <div slot="header" class="title">
         <span>文章列表</span>
       </div>
-      <el-form :inline="true" :model="formInline" class="demo-form-inline">
+      <!-- 搜索区域 -->
+      <el-form :inline="true" :model="q" class="demo-form-inline">
+        <!-- 文章分类 -->
         <el-form-item label="文章分类">
-          <el-select v-model="formInline.region" placeholder="请选择分类">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+          <el-select v-model="q.cate_id" placeholder="请选择分类">
+            <!-- 循环渲染分类可选项 -->
+            <el-option v-for="obj in cateList" :label="obj.cate_name" :value="obj.cate_id" :key="obj.cate_id"></el-option>
           </el-select>
         </el-form-item>
+        <!-- 发布状态 -->
         <el-form-item label="发布状态">
-          <el-select v-model="formInline.region" placeholder="请选择状态">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+          <el-select v-model="q.state" placeholder="请选择状态">
+            <el-option label="已发布" value="已发布"></el-option>
+            <el-option label="草稿" value="草稿"></el-option>
           </el-select>
         </el-form-item>
+        <!-- 查询/重置 -->
         <el-form-item>
           <el-button type="primary" @click="onSubmit">查询</el-button>
           <el-button type="info" @click="resetSubmit">重置</el-button>
         </el-form-item>
-
+        <!-- 发布文章 -->
         <el-form-item>
           <el-button type="primary" class="add" @click="showPubDialogFn">发布文章</el-button>
         </el-form-item>
+
       </el-form>
     </el-card>
 
@@ -39,11 +44,15 @@
         <!-- 文章分类 -->
         <el-form-item label="文章分类" prop="cate_id" :label-width="formLabelWidth">
           <el-select v-model="pubForm.cate_id" placeholder="请选择分类" style="width:100%">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+            <!-- 循环渲染分类可选项 -->
+            <el-option v-for="obj in cateList" :label="obj.cate_name" :value="obj.cate_id" :key="obj.cate_id"></el-option>
           </el-select>
         </el-form-item>
-
+        <!-- 文章内容 -->
+        <el-form-item label="文章内容" prop="content" :label-width="formLabelWidth">
+          <quill-editor v-model="pubForm.content" style="width:100%">
+          </quill-editor>
+        </el-form-item>
       </el-form>
 
       <div slot="footer" class="dialog-footer">
@@ -55,24 +64,36 @@
 </template>
 
 <script>
+import { getArtCateListAPI } from '@/api/index.js'
 export default {
   data() {
     return {
-      formInline: {
-        user: '',
-        region: ''
+      // 文章列表---查询参数的对象
+      q: {
+        pagenum: 1,
+        pagesize: 2,
+        cate_id: '',
+        state: ''
       },
+      // 文章分类列表
+      cateList: [],
+      // 发布文章---表单数据对象
       pubForm: {
-        title: '',
-        cate_id: ''
+        title: '', // 文章标题
+        cate_id: '', // 文章分类
+        content: '' // 文章内容
       },
       // 表单数据对象校验规则
       pubFormRules: {
         title: [
-          { required: true, message: '请输入文章标题', trigger: 'blur' }
+          { required: true, message: '请输入文章标题', trigger: 'blur' },
+          { min: 1, max: 30, message: '文章标题的长度1-30个字符', trigger: 'blur' }
         ],
         cate_id: [
           { required: true, message: '请选择文章分类', trigger: 'blur' }
+        ],
+        content: [
+          { required: true, message: '请输入文章内容', trigger: 'blur' }
         ]
       },
       isEdit: false, // true为编辑状态，false为新增状态
@@ -80,6 +101,10 @@ export default {
       formLabelWidth: '120px',
       pubDialogVisible: false // 控制发布文章的对话框显示与隐藏
     }
+  },
+  created() {
+    // 初始化文章列表
+    this.initCateList()
   },
   methods: {
     onSubmit() {
@@ -117,13 +142,23 @@ export default {
       //  方法一：使用 try{} catch{err}
       //  方法二：使用 promise 的链式调用，而且在catch里return的非Promise拒绝状态对象值，都会当作成功的结果返回给原地新的Promise对象结果。
     },
+    /**
+     * 获取文章分类
+     */
+    async initCateList() {
+      const { data: res } = await getArtCateListAPI()
+      if (res.code === 0) {
+        this.cateList = res.data
+      }
+    },
     cancelFn() {
       console.log('222')
     },
     commitFn() {
-      console.log('')
+      console.log('333')
     }
   }
+
 }
 </script>
 
@@ -156,5 +191,11 @@ export default {
       }
     }
   }
+
+  // ::v-deep 外面不能套父级选择器
+  ::v-deep .ql-editor {
+    min-height: 300px;
+  }
+
 }
 </style>
