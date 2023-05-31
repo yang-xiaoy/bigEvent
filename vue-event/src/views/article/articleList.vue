@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import coverImg from '@/assets/images/cover.jpg'
+import defaultImg from '@/assets/images/cover.jpg'
 import { getArtCateListAPI } from '@/api/index.js'
 export default {
   data() {
@@ -95,7 +95,7 @@ export default {
         title: '', // 文章标题
         cate_id: '', // 文章分类
         content: '', // 文章内容
-        cover_img: '', // 文章封面
+        cover_img: '', // 文章封面图片（保存是个文件）
         state: '' // 发布状态（值：已发布或草稿）
       },
       // 表单数据对象校验规则
@@ -122,10 +122,15 @@ export default {
     this.initCateList()
   },
   methods: {
+    /**
+     * 文章列表页面--->查询事件
+     */
     onSubmit() {
       console.log('submit!')
-      console.log(coverImg)
     },
+    /**
+     * 文章列表页面--->重置事件
+     */
     resetSubmit() {
       console.log('reset')
     },
@@ -179,16 +184,23 @@ export default {
      */
     changeCoverFn(e) {
       const files = e.target.files
-      console.log(files)
+      if (files.length === 0) {
+        // 如果files.length等于0，那么就将pubForm表单对象中的cover_img设置为null
+        this.pubForm.cover_img = null
+        this.$refs.imgRef.setAttribute('src', defaultImg)
+      } else {
+        this.pubForm.cover_img = files[0]
+        const url = URL.createObjectURL(files[0])
+        this.$refs.imgRef.setAttribute('src', url)
+      }
     },
-
     /**
      * 发布文章/存为草稿--->点击事件
      * @param {*} str
      */
     pubArticleFn(str) {
       // str接收的是一个字符串，"已发布"或"草稿"（后端要求的参数值）
-      console.log('333')
+      this.pubForm.state = str
     }
   }
 
@@ -249,7 +261,7 @@ export default {
 
     .cover_img {
       width: 400px;
-      height: 280px;
+      height: 400px;
       object-fit: cover;
     }
 
