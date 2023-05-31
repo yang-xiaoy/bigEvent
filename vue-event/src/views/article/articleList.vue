@@ -53,17 +53,30 @@
           <quill-editor v-model="pubForm.content" style="width:100%">
           </quill-editor>
         </el-form-item>
+        <!-- 文章封面 -->
+        <el-form-item label="文章封面" prop="cover_img" :label-width="formLabelWidth">
+          <!-- 显示封面图片 -->
+          <img src="../../assets/images/cover.jpg" class="cover_img" ref="imgRef" />
+          <!-- 文件选框，默认被隐藏 -->
+          <input type="file" style="display: none;" accept="image/*" ref="iptFileRef" @change="changeCoverFn($event)">
+          <br />
+          <!-- 选择封面按钮 -->
+          <div class="chooseBut">
+            <el-button type="text" @click="selCoverFn()">+选择封面</el-button>
+          </div>
+        </el-form-item>
+        <!-- 发布文章/存为草稿 -->
+        <el-form-item :label-width="formLabelWidth">
+          <el-button type="primary" @click="pubArticleFn('已发布')">发布文章</el-button>
+          <el-button @click="pubArticleFn('草稿')">存为草稿</el-button>
+        </el-form-item>
       </el-form>
-
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="commitFn">确 定</el-button>
-        <el-button @click="cancelFn">取 消</el-button>
-      </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import coverImg from '@/assets/images/cover.jpg'
 import { getArtCateListAPI } from '@/api/index.js'
 export default {
   data() {
@@ -81,7 +94,9 @@ export default {
       pubForm: {
         title: '', // 文章标题
         cate_id: '', // 文章分类
-        content: '' // 文章内容
+        content: '', // 文章内容
+        cover_img: '', // 文章封面
+        state: '' // 发布状态（值：已发布或草稿）
       },
       // 表单数据对象校验规则
       pubFormRules: {
@@ -109,6 +124,7 @@ export default {
   methods: {
     onSubmit() {
       console.log('submit!')
+      console.log(coverImg)
     },
     resetSubmit() {
       console.log('reset')
@@ -151,10 +167,27 @@ export default {
         this.cateList = res.data
       }
     },
-    cancelFn() {
-      console.log('222')
+    /**
+     * 选择封面按钮--->点击事件--->让窗口出来
+     */
+    selCoverFn() {
+      this.$refs.iptFileRef.click()
     },
-    commitFn() {
+    /**
+     * 封面选择改变事件
+     * @param {*} e 原生事件对象
+     */
+    changeCoverFn(e) {
+      const files = e.target.files
+      console.log(files)
+    },
+
+    /**
+     * 发布文章/存为草稿--->点击事件
+     * @param {*} str
+     */
+    pubArticleFn(str) {
+      // str接收的是一个字符串，"已发布"或"草稿"（后端要求的参数值）
       console.log('333')
     }
   }
@@ -195,7 +228,38 @@ export default {
   // ::v-deep 外面不能套父级选择器
   ::v-deep .ql-editor {
     min-height: 300px;
+    font-size: 16px;
   }
 
+  .el-button {
+    font-size: 16px;
+  }
+
+  :deep .el-form-item__content {
+    text-align: left;
+  }
+
+  .el-form-item {
+    text-align: center;
+
+    :deep .el-input__inner,
+    :deep .el-form-item__label {
+      font-size: 16px;
+    }
+
+    .cover_img {
+      width: 400px;
+      height: 280px;
+      object-fit: cover;
+    }
+
+    .chooseBut {
+      float: left;
+    }
+  }
+
+  .dialog-footer {
+    float: left;
+  }
 }
 </style>
