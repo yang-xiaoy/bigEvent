@@ -45,12 +45,12 @@
         <el-form-item label="文章分类" prop="cate_id" :label-width="formLabelWidth">
           <el-select v-model="pubForm.cate_id" placeholder="请选择分类" style="width:100%">
             <!-- 循环渲染分类可选项 -->
-            <el-option v-for="obj in cateList" :label="obj.cate_name" :value="obj.cate_id" :key="obj.cate_id"></el-option>
+            <el-option v-for="obj in cateList" :label="obj.cate_name" :value="obj.id" :key="obj.cate_id"></el-option>
           </el-select>
         </el-form-item>
         <!-- 文章内容 -->
         <el-form-item label="文章内容" prop="content" :label-width="formLabelWidth">
-          <quill-editor v-model="pubForm.content" style="width:100%">
+          <quill-editor v-model="pubForm.content" style="width:100%" @change="contentChangeFn">
           </quill-editor>
         </el-form-item>
         <!-- 文章封面 -->
@@ -105,10 +105,13 @@ export default {
           { min: 1, max: 30, message: '文章标题的长度1-30个字符', trigger: 'blur' }
         ],
         cate_id: [
-          { required: true, message: '请选择文章分类', trigger: 'blur' }
+          { required: true, message: '请选择文章分类', trigger: 'change' }
         ],
         content: [
-          { required: true, message: '请输入文章内容', trigger: 'blur' }
+          { required: true, message: '请输入文章内容', trigger: 'change' }
+        ],
+        cover_img: [
+          { required: true, message: '请选择文章封面', trigger: 'change' }
         ]
       },
       isEdit: false, // true为编辑状态，false为新增状态
@@ -201,6 +204,15 @@ export default {
     pubArticleFn(str) {
       // str接收的是一个字符串，"已发布"或"草稿"（后端要求的参数值）
       this.pubForm.state = str
+      this.$refs.pubFormRef.validate(async valid => {
+        if (valid) {
+          console.log('通过')
+        }
+      })
+    },
+    // 文章内容--->富文本编辑器校验
+    contentChangeFn() {
+      this.$refs.pubForm.validateField('content')
     }
   }
 
