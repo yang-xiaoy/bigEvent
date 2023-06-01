@@ -35,7 +35,8 @@
     </el-card>
 
     <!-- 发布文章 dialog -->
-    <el-dialog title="发布文章" :visible.sync="pubDialogVisible" fullscreen :before-close="handleColse">
+    <el-dialog title="发布文章" :visible.sync="pubDialogVisible" fullscreen :before-close="handleColse"
+      @close="dialogCloseFn">
       <el-form :model="pubForm" :rules="pubFormRules" ref="pubFormRef">
         <!-- 文章名称 -->
         <el-form-item label="文章标题" prop="title" :label-width="formLabelWidth">
@@ -50,7 +51,7 @@
         </el-form-item>
         <!-- 文章内容 -->
         <el-form-item label="文章内容" prop="content" :label-width="formLabelWidth">
-          <quill-editor v-model="pubForm.content" style="width:100%" @change="contentChangeFn">
+          <quill-editor v-model="pubForm.content" style="width:100%" @blur="contentChangeFn">
           </quill-editor>
         </el-form-item>
         <!-- 文章封面 -->
@@ -77,7 +78,7 @@
 
 <script>
 import defaultImg from '@/assets/images/cover.jpg'
-import { getArtCateListAPI } from '@/api/index.js'
+import { getArtCateListAPI, pusArticleAPI } from '@/api/index.js'
 export default {
   data() {
     return {
@@ -176,6 +177,12 @@ export default {
       }
     },
     /**
+     *获取文章列表
+     */
+    async getArticleList() {
+
+    },
+    /**
      * 选择封面按钮--->点击事件--->让窗口出来
      */
     selCoverFn() {
@@ -196,6 +203,8 @@ export default {
         const url = URL.createObjectURL(files[0])
         this.$refs.imgRef.setAttribute('src', url)
       }
+      // 让表单单独校验封面的值
+      this.$refs.pubFormRef.validateField('cover_img')
     },
     /**
      * 发布文章/存为草稿--->点击事件
@@ -206,13 +215,39 @@ export default {
       this.pubForm.state = str
       this.$refs.pubFormRef.validate(async valid => {
         if (valid) {
-          console.log('通过')
+          // 准备一个表单对象数据容器，FormData类是HTML5新出的专门装文件内容和其它的参数的一个容器哦
+          const fd = new FormData()
+          // fd.append('参数名', 值)
+          fd.append('title', this.pubForm.title)
+          fd.append('cate_id', this.pubForm.cate_id)
+          fd.append('content', this.pubForm.content)
+          fd.append('cover_img', this.pubForm.cover_img)
+          fd.append('state', this.pubForm.state)
+          const { data: res } = await pusArticleAPI(fd)
+          if (res.code !== 0) {
+            return this.$message.error('发布文章失败！')
+          }
+          this.$message.success('发布文章成功！')
+          // 关闭对话框
+          this.pubDialogVisible = false
+        } else {
+          return false
         }
       })
     },
-    // 文章内容--->富文本编辑器校验
+    /**
+     * 文章内容--->富文本编辑器校验
+     */
     contentChangeFn() {
-      this.$refs.pubForm.validateField('content')
+      this.$refs.pubFormRef.validateField('content')
+    },
+    /**
+     * 新增文章--->对话框关闭时--->清空表单
+     */
+    dialogCloseFn() {
+      this.$refs.pubFormRef.resetFields()
+      // 我们需要手动给封面标签img重新设置一个值，因为它没有受到v-model的影响
+      this.$refs.imgRef.setAttribute('src', defaultImg)
     }
   }
 
