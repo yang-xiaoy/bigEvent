@@ -32,6 +32,25 @@
         </el-form-item>
 
       </el-form>
+      <!-- 文章表格区域 -->
+      <el-table :data="articleList" style="width: 100%">
+        <el-table-column prop="id" label="文章ID" width="180"></el-table-column>
+        <el-table-column prop="title" label="文章标题" width="180"></el-table-column>
+        <el-table-column prop="cate_name" label="文章分类"></el-table-column>
+        <el-table-column prop="pub_date" label="发布时间">
+          <template v-slot="scope">
+            <span>{{ $formatDate(scope.row.pub_date) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="state" label="文章状态"></el-table-column>
+        <el-table-column label="操作"></el-table-column>
+      </el-table>
+      <!-- 分页区域 -->
+      <el-pagination @size-change="handleSizeChangeFn" @current-change="handleCurrentChangeFn"
+        :current-page.sync="q.pagenum" :page-sizes="[2, 3, 5, 10]" :page-size.sync="q.pagesize"
+        layout="total, sizes, prev, pager, next, jumper" :total="total">
+      </el-pagination>
+
     </el-card>
 
     <!-- 发布文章 dialog -->
@@ -78,19 +97,23 @@
 
 <script>
 import defaultImg from '@/assets/images/cover.jpg'
-import { getArtCateListAPI, pusArticleAPI } from '@/api/index.js'
+import { getArtCateListAPI, pusArticleAPI, getArticleListAPI } from '@/api/index.js'
 export default {
   data() {
     return {
+      // 文章分类列表
+      cateList: [],
+      // 文章列表
+      articleList: [],
+      total: 0, // 文章总条数
+
       // 文章列表---查询参数的对象
       q: {
-        pagenum: 1,
-        pagesize: 2,
+        pagenum: 1, // 默认拿第一页的数据
+        pagesize: 2, // 默认当前页需要几条数据（传递给后台，后台就返回几条数据）
         cate_id: '',
         state: ''
       },
-      // 文章分类列表
-      cateList: [],
       // 发布文章---表单数据对象
       pubForm: {
         title: '', // 文章标题
@@ -115,26 +138,24 @@ export default {
           { required: true, message: '请选择文章封面', trigger: 'change' }
         ]
       },
-      isEdit: false, // true为编辑状态，false为新增状态
-      editId: '', // 保存正在要编辑的数据id值
+      // isEdit: false, // true为编辑状态，false为新增状态
+      // editId: '', // 保存正在要编辑的数据id值
       formLabelWidth: '120px',
       pubDialogVisible: false // 控制发布文章的对话框显示与隐藏
     }
   },
   created() {
-    // 初始化文章列表
-    this.initCateList()
+    // 初始化文章分类
+    this.getCateList()
+    // 获取文章列表
+    this.getArticleList()
   },
   methods: {
-    /**
-     * 文章列表页面--->查询事件
-     */
+    // 文章列表页面--->查询事件
     onSubmit() {
       console.log('submit!')
     },
-    /**
-     * 文章列表页面--->重置事件
-     */
+    //  文章列表页面--->重置事件
     resetSubmit() {
       console.log('reset')
     },
@@ -167,31 +188,25 @@ export default {
       //  方法一：使用 try{} catch{err}
       //  方法二：使用 promise 的链式调用，而且在catch里return的非Promise拒绝状态对象值，都会当作成功的结果返回给原地新的Promise对象结果。
     },
-    /**
-     * 获取文章分类
-     */
-    async initCateList() {
+    //  获取文章分类
+    async getCateList() {
       const { data: res } = await getArtCateListAPI()
       if (res.code === 0) {
         this.cateList = res.data
       }
     },
-    /**
-     *获取文章列表
-     */
+    //  获取文章列表
     async getArticleList() {
-
+      const { data: res } = await getArticleListAPI(this.q)
+      this.articleList = res.data // 保存当前获取文章的列表（注意：有分页不是所有数据）
+      this.total = res.total // 文章总条数
+      console.log(res)
     },
-    /**
-     * 选择封面按钮--->点击事件--->让窗口出来
-     */
+    //  选择封面按钮--->点击事件--->让窗口出来
     selCoverFn() {
       this.$refs.iptFileRef.click()
     },
-    /**
-     * 封面选择改变事件
-     * @param {*} e 原生事件对象
-     */
+    // 封面选择改变事件 @param {*} e 原生事件对象
     changeCoverFn(e) {
       const files = e.target.files
       if (files.length === 0) {
@@ -206,10 +221,7 @@ export default {
       // 让表单单独校验封面的值
       this.$refs.pubFormRef.validateField('cover_img')
     },
-    /**
-     * 发布文章/存为草稿--->点击事件
-     * @param {*} str
-     */
+    //  发布文章/存为草稿--->点击事件 @param {*} str
     pubArticleFn(str) {
       // str接收的是一个字符串，"已发布"或"草稿"（后端要求的参数值）
       this.pubForm.state = str
@@ -230,24 +242,33 @@ export default {
           this.$message.success('发布文章成功！')
           // 关闭对话框
           this.pubDialogVisible = false
+          // 再次请求文章列表数据，刷新文章列表
+          this.getArticleList()
         } else {
           return false
         }
       })
     },
-    /**
-     * 文章内容--->富文本编辑器校验
-     */
+    //  文章内容--->富文本编辑器校验
     contentChangeFn() {
       this.$refs.pubFormRef.validateField('content')
     },
-    /**
-     * 新增文章--->对话框关闭时--->清空表单
-     */
+    //  新增文章--->对话框关闭时--->清空表单
     dialogCloseFn() {
       this.$refs.pubFormRef.resetFields()
       // 我们需要手动给封面标签img重新设置一个值，因为它没有受到v-model的影响
       this.$refs.imgRef.setAttribute('src', defaultImg)
+    },
+    // 分页--->每页条数改变触发,size：当前需要每页显示的条数
+    // 核心思想：根据选择的页码或者条数，影响q对象对应属性的值，在重新发一次请求让后台重新返回数据
+    handleSizeChangeFn(size) {
+      this.q.pagesize = size
+    },
+    // 当前页码改变时触发
+    handleCurrentChangeFn(nowPage) {
+      // nowPage：当前要看的第几页，页数
+      this.q.pagenum = nowPage
+      this.getArticleList()
     }
   }
 
