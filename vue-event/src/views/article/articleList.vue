@@ -11,7 +11,7 @@
         <el-form-item label="文章分类">
           <el-select v-model="q.cate_id" placeholder="请选择分类">
             <!-- 循环渲染分类可选项 -->
-            <el-option v-for="obj in cateList" :label="obj.cate_name" :value="obj.cate_id" :key="obj.cate_id"></el-option>
+            <el-option v-for="obj in cateList" :label="obj.cate_name" :value="obj.id" :key="obj.cate_id"></el-option>
           </el-select>
         </el-form-item>
         <!-- 发布状态 -->
@@ -23,8 +23,8 @@
         </el-form-item>
         <!-- 查询/重置 -->
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">查询</el-button>
-          <el-button type="info" @click="resetSubmit">重置</el-button>
+          <el-button type="primary" @click="choseFn">筛选</el-button>
+          <el-button type="info" @click="resetFn">重置</el-button>
         </el-form-item>
         <!-- 发布文章 -->
         <el-form-item>
@@ -50,7 +50,6 @@
         :current-page.sync="q.pagenum" :page-sizes="[2, 3, 5, 10]" :page-size.sync="q.pagesize"
         layout="total, sizes, prev, pager, next, jumper" :total="total">
       </el-pagination>
-
     </el-card>
 
     <!-- 发布文章 dialog -->
@@ -151,13 +150,20 @@ export default {
     this.getArticleList()
   },
   methods: {
-    // 文章列表页面--->查询事件
-    onSubmit() {
-      console.log('submit!')
+    // 文章列表页面--->筛选按钮--->点击事件
+    choseFn() {
+      this.q.pagenum = 1
+      this.q.pagesize = 2
+      // 重新获取文章列表
+      this.getArticleList()
     },
-    //  文章列表页面--->重置事件
-    resetSubmit() {
-      console.log('reset')
+    //  文章列表页面--->重置按钮--->点击事件
+    resetFn() {
+      this.q.pagenum = 1
+      this.q.pagesize = 2
+      this.q.cate_id = ''
+      this.q.state = ''
+      this.getArticleList()
     },
     // 发布文章按钮--->点击事件
     showPubDialogFn() {
@@ -263,6 +269,8 @@ export default {
     // 核心思想：根据选择的页码或者条数，影响q对象对应属性的值，在重新发一次请求让后台重新返回数据
     handleSizeChangeFn(size) {
       this.q.pagesize = size
+      this.q.pagenum = 1
+      this.getArticleList()
     },
     // 当前页码改变时触发
     handleCurrentChangeFn(nowPage) {
@@ -340,6 +348,10 @@ export default {
 
   .dialog-footer {
     float: left;
+  }
+
+  .el-pagination {
+    margin-top: 20px;
   }
 }
 </style>
