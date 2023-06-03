@@ -199,7 +199,7 @@ export const pusArticleAPI = (fd) => {
 /**
  * 获取文章列表
  * @param {*} param0 { pagenum:当前页码数, pagesize:当前页条数, cate_id:文章分类id, state:文章状态 }
- * @returns
+ * @returns promise 对象
  */
 export const getArticleListAPI = ({ pagenum, pagesize, cate_id, state }) => {
   return request({
@@ -209,6 +209,20 @@ export const getArticleListAPI = ({ pagenum, pagesize, cate_id, state }) => {
       pagesize,
       cate_id,
       state
+    }
+  })
+}
+
+/**
+ * 获取文章详情
+ * @param {*} id 文章id
+ * @returns promise 对象
+ */
+export const getArtDetailAPI = (id) => {
+  return request({
+    url: '/my/article/info',
+    params: {
+      id
     }
   })
 }

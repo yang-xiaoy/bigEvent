@@ -35,7 +35,11 @@
       <!-- 文章表格区域 -->
       <el-table :data="articleList" style="width: 100%">
         <el-table-column prop="id" label="文章ID" width="180"></el-table-column>
-        <el-table-column prop="title" label="文章标题" width="180"></el-table-column>
+        <el-table-column prop="title" label="文章标题" width="180">
+          <template v-slot="scope">
+            <el-link type="primary" @click="showDatileFn(scope.row.id)">{{ scope.row.title }}</el-link>
+          </template>
+        </el-table-column>
         <el-table-column prop="cate_name" label="文章分类"></el-table-column>
         <el-table-column prop="pub_date" label="发布时间">
           <template v-slot="scope">
@@ -96,7 +100,8 @@
 
 <script>
 import defaultImg from '@/assets/images/cover.jpg'
-import { getArtCateListAPI, pusArticleAPI, getArticleListAPI } from '@/api/index.js'
+import { getArtCateListAPI, pusArticleAPI, getArticleListAPI, getArtDetailAPI } from '@/api/index.js'
+import { baseURL } from '@/utils/request'
 export default {
   data() {
     return {
@@ -105,7 +110,7 @@ export default {
       // 文章列表
       articleList: [],
       total: 0, // 文章总条数
-
+      baseURL: baseURL,
       // 文章列表---查询参数的对象
       q: {
         pagenum: 1, // 默认拿第一页的数据
@@ -277,6 +282,10 @@ export default {
       // nowPage：当前要看的第几页，页数
       this.q.pagenum = nowPage
       this.getArticleList()
+    },
+    async showDatileFn(id) {
+      const res = await getArtDetailAPI(id)
+      console.log(res)
     }
   }
 
