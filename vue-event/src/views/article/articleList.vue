@@ -107,7 +107,7 @@ export default {
     return {
       // 文章分类列表
       cateList: [],
-      // 文章列表
+      // 文章列表（保存的是当前页的数据，上一页和下一个都在数据库中）
       articleList: [],
       total: 0, // 文章总条数
       baseURL: baseURL,
