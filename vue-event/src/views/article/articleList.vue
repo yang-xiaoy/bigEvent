@@ -47,7 +47,11 @@
           </template>
         </el-table-column>
         <el-table-column prop="state" label="文章状态"></el-table-column>
-        <el-table-column label="操作"></el-table-column>
+        <el-table-column label="操作">
+          <template v-slot="scope">
+            <el-button type="danger" size="mini" @click="deletaArticleFn(scope.row.id)">删除</el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <!-- 分页区域 -->
       <el-pagination @size-change="handleSizeChangeFn" @current-change="handleCurrentChangeFn"
@@ -95,12 +99,27 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+
+    <!-- 文章详情 dialog -->
+    <el-dialog title="文章详情" :visible.sync="pubArtDatile">
+      <div class="artDatile">
+        <h4>文章标题：{{ artDatile.title }}</h4>
+        <p>所属分类：{{ artDatile.cate_name }}</p>
+        <p>文章状态：{{ artDatile.state }}</p>
+        <div class="img_show">
+          <span>封面：</span>
+          <img :src="baseURL + artDatile.cover_img" alt="">
+        </div>
+        <p>文章作者：{{ artDatile.nickname || artDatile.username }}</p>
+        <p>发布时间：{{ $formatDate(artDatile.pub_date) }}</p>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import defaultImg from '@/assets/images/cover.jpg'
-import { getArtCateListAPI, pusArticleAPI, getArticleListAPI, getArtDetailAPI } from '@/api/index.js'
+import { getArtCateListAPI, pusArticleAPI, getArticleListAPI, getArtDetailAPI, delArticleAPI } from '@/api/index.js'
 import { baseURL } from '@/utils/request'
 export default {
   data() {
@@ -110,6 +129,7 @@ export default {
       // 文章列表（保存的是当前页的数据，上一页和下一个都在数据库中）
       articleList: [],
       total: 0, // 文章总条数
+      artDatile: [], // 文章详情数据
       baseURL: baseURL,
       // 文章列表---查询参数的对象
       q: {
@@ -145,7 +165,8 @@ export default {
       // isEdit: false, // true为编辑状态，false为新增状态
       // editId: '', // 保存正在要编辑的数据id值
       formLabelWidth: '120px',
-      pubDialogVisible: false // 控制发布文章的对话框显示与隐藏
+      pubDialogVisible: false, // 控制发布文章的对话框显示与隐藏
+      pubArtDatile: false // 文章详情对话框显示/隐藏
     }
   },
   created() {
@@ -211,7 +232,6 @@ export default {
       const { data: res } = await getArticleListAPI(this.q)
       this.articleList = res.data // 保存当前获取文章的列表（注意：有分页不是所有数据）
       this.total = res.total // 文章总条数
-      console.log(res)
     },
     //  选择封面按钮--->点击事件--->让窗口出来
     selCoverFn() {
@@ -283,9 +303,25 @@ export default {
       this.q.pagenum = nowPage
       this.getArticleList()
     },
+    // 点击文章标题，查看文章详情
     async showDatileFn(id) {
-      const res = await getArtDetailAPI(id)
-      console.log(res)
+      this.pubArtDatile = true
+      // 拿到文章详情数据
+      const { data: res } = await getArtDetailAPI(id)
+      if (res.code !== 0) {
+        return this.$message.err('文章详情获取失败！')
+      }
+      // 将文章详情数据存放到数据中
+      this.artDatile = res.data
+    },
+    // 删除文章，删除文章事件
+    async deletaArticleFn(id) {
+      const { data: res } = await delArticleAPI(id)
+      if (res.code !== 0) {
+        return this.$message.error('删除文章失败！')
+      }
+      this.getArticleList()
+      this.$message.success('删除文章成功！')
     }
   }
 
@@ -319,6 +355,20 @@ export default {
       .el-form-item:last-child {
         float: right;
       }
+    }
+  }
+
+  .el-table {
+    :deep .el-table__cell {
+      font-size: 16px;
+    }
+
+    .el-button {
+      font-size: 16px;
+    }
+
+    .el-link {
+      font-size: 16px;
     }
   }
 
@@ -361,6 +411,21 @@ export default {
 
   .el-pagination {
     margin-top: 20px;
+  }
+
+  .artDatile {
+    text-align: left;
+    font-size: 16px;
+
+    .img_show {
+      img {
+        width: 200px;
+      }
+    }
+
+    p {
+      margin: 10px 0;
+    }
   }
 }
 </style>
