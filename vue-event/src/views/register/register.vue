@@ -32,8 +32,15 @@ import { registerAPI } from '@/api/index.js'
 export default {
   name: 'index',
   data() {
-    // 注意：必须在data里面定义此箭头函数，才能确保this.form的使用
+    /**
+     * 自定义校验规则
+     * @param {*} rule
+     * @param {*} value 是校验规则绑定的参数，也就是确认密码
+     * @param {*} callkack 如果验证成功，则直接调用callback回调函数即可
+     */
     const samePwdFn = (rule, value, callkack) => {
+      // 注意：必须在data里面定义此箭头函数，才能确保this.form的使用
+      // 密码和确定密码进行比对
       if (value !== this.form.password) {
         // 如果验证失败，则调用回调函数，指定一个错误对象
         callkack(new Error('两次输入的密码不一致'))
@@ -69,7 +76,12 @@ export default {
         ],
         repassword: [
           { required: true, message: '请再次输入密码', trigger: 'blur' },
-          { pattern: /^\S{6,15}$/, message: '密码必须是6-15的非空字符', trigger: 'blur' },
+          {
+            pattern: /^\S{6,15}$/,
+            message: '密码必须是6-15的非空字符',
+            trigger: 'blur'
+          },
+          // samePwdFn自定义校验函数
           { validator: samePwdFn, trigger: 'blur' }
         ]
       }

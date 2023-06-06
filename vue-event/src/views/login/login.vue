@@ -60,9 +60,7 @@ export default {
   methods: {
     // 映射
     ...mapMutations(['updateToken']),
-    /**
-     * 登录事件处理函数
-     */
+    //  登录事件处理函数
     async loginFn() {
       this.$refs.loginForm.validate(async valid => {
         if (valid) {
