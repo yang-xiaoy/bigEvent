@@ -1,10 +1,8 @@
 import request from '@/utils/request.js'
-// 引入 store 对象
-// import store from '@/store/index.js'
 
 /**
  * 注册用户API
- * @param {*} param0
+ * @param {*} param0{ username：用户名, password：用户密码, repassword：确认密码 }
  * @returns promise 对象
  */
 export const registerAPI = ({ username, password, repassword }) => {
@@ -21,7 +19,7 @@ export const registerAPI = ({ username, password, repassword }) => {
 
 /**
  * 用户登录API
- * @param {*} param0
+ * @param {*} param0{ username：用户名, password：用户密码 }
  * @returns promise 对象
  */
 export const loginAPI = ({ username, password }) => {
@@ -37,6 +35,7 @@ export const loginAPI = ({ username, password }) => {
 
 /**
  * 获取用户信息，存储到vuex中
+ * methods：默认为get方式获取
  * @returns promise 对象
  */
 export const getUserInfoAPI = () => {
@@ -55,6 +54,7 @@ export const getUserInfoAPI = () => {
 
 /**
  * 请求菜单数据
+ * methods：默认为get方式获取
  * @returns promise 对象
  */
 export const getMenuListAPI = () => {
@@ -124,7 +124,8 @@ export const updatePwdAPI = ({ old_pwd, new_pwd, re_pwd }) => {
 }
 
 /**
- * 获取文章分类，默认请求类型get
+ * 获取文章分类
+ * methods：默认为get方式获取
  * @returns promise 对象
  */
 export const getArtCateListAPI = () => {
@@ -199,6 +200,7 @@ export const pusArticleAPI = (fd) => {
 /**
  * 获取文章列表
  * @param {*} param0 { pagenum:当前页码数, pagesize:当前页条数, cate_id:文章分类id, state:文章状态 }
+ * methods：默认为get方式获取
  * @returns promise 对象
  */
 export const getArticleListAPI = ({ pagenum, pagesize, cate_id, state }) => {
@@ -216,6 +218,7 @@ export const getArticleListAPI = ({ pagenum, pagesize, cate_id, state }) => {
 /**
  * 获取文章详情
  * @param {*} id 文章id
+ * methods：默认为get方式获取
  * @returns promise 对象
  */
 export const getArtDetailAPI = (id) => {

@@ -185,11 +185,6 @@ export default {
     this.getArtCateList()
   }
 }
-
-/**
- * BUG复现：
- *  1.
- */
 </script>
 
 <style lang="less" scoped>

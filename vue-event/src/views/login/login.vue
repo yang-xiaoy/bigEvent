@@ -56,7 +56,6 @@ export default {
       }
     }
   },
-
   methods: {
     // 映射
     ...mapMutations(['updateToken']),

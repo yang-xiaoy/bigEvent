@@ -32,7 +32,7 @@
 import { updatePwdAPI } from '@/api/index.js'
 export default {
   data() {
-    // 新密码和旧密码不能一样
+    // 自定义校验规则函数，新密码和旧密码不能一样
     const samePwd = (rules, value, callback) => {
       // value就是校验规则所对应输入框值（也就是新密码）
       if (this.passwordForm.old_pwd === value) {
@@ -41,7 +41,7 @@ export default {
         callback() // 通过验证
       }
     }
-    // 新密码和确认密码必须一致
+    // 自定义校验规则函数，新密码和确认密码必须一致
     const rePwd = (rules, value, callback) => {
       if (this.passwordForm.new_pwd !== value) {
         callback(new Error('两次密码不一致，请重新输入！'))
@@ -51,9 +51,9 @@ export default {
     }
     return {
       passwordForm: {
-        old_pwd: '',
-        new_pwd: '',
-        re_pwd: ''
+        old_pwd: '', // 旧密码
+        new_pwd: '', // 新密码
+        re_pwd: '' // 确认新密码
       },
       passwordFormRules: {
         old_pwd: [
@@ -71,7 +71,7 @@ export default {
             message: '密码必须是6-15的非空字符',
             trigger: 'blur'
           },
-          // 定义校验规则
+          // 自定义校验规则（samePwd函数）
           { validator: samePwd, trigger: 'blur' }
         ],
         re_pwd: [
@@ -81,7 +81,7 @@ export default {
             message: '密码必须是6-15的非空字符',
             trigger: 'blur'
           },
-          // 定义校验规则
+          // 自定义校验规则（rePwd函数）
           { validator: rePwd, trigger: 'blur' }
         ]
       }

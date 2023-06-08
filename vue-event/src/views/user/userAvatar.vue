@@ -5,9 +5,10 @@
         <span>更换头像</span>
       </div>
       <el-image v-if="avatar == ''" class="img" :src="url"></el-image>
+      <!-- 用户图像显示 -->
       <el-image v-else class="img" :src="avatar"></el-image>
-
       <div class="button">
+        <!-- 文件上传按钮 -->
         <input type="file" accept="image/*" style="display:none" ref="iptRef" @change="onFileChange">
         <el-button type="primary" @click="chooseImg">选择图片<i class="el-icon-plus el-icon--right"></i></el-button>
         <el-button type="success" @click="upLoadFn">上传图像<i class="el-icon-upload el-icon--right"></i></el-button>
@@ -27,9 +28,9 @@ export default {
     }
   },
   methods: {
-    // 选择图片（点击事件）
+    // 选择图片--->点击事件--->让选择框出现（选择图片文件的框框出现）
     chooseImg() {
-      //
+      // 模拟点击行为
       this.$refs.iptRef.click()
     },
     // 选择图片确定了

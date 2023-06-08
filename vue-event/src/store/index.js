@@ -16,7 +16,6 @@ export default new Vuex.Store({
     // username(state) {
     //   return state.userInfo.username
     // },
-
     // 简写的形式
     username: (state) => state.userInfo.username,
     nickname: (state) => state.userInfo.nickname,
@@ -35,7 +34,7 @@ export default new Vuex.Store({
     // 请求用户信息
     async getUserInfoAction(store) {
       const res = await getUserInfoAPI()
-      console.log(res)
+      // console.log(res)
       store.commit('updateUserInfo', res.data.data)
     }
   },
