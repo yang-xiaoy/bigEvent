@@ -79,33 +79,33 @@ export default {
 <style lang="less" scoped>
 .side_container {
   height: 100vh;
-}
 
-.el-avatar {
-  margin: 30px 0 0 0;
-}
+  .el-aside {
+    height: 100%;
+    color: #333;
 
-.el-aside::-webkit-scrollbar {
-  display: none;
-}
+    .el-menu {
+      height: 100%;
+      user-select: none;
 
-.el-aside {
-  height: 100vh;
-  color: #333;
-
-  .el-menu {
-    height: 100vh;
-    user-select: none;
-
-    .el-menu-item,
-    .el-submenu span {
-      font-size: 14px;
+      .el-menu-item,
+      .el-submenu span {
+        font-size: 14px;
+      }
     }
   }
-}
 
-.user_info {
-  margin-bottom: 25px;
-  text-align: center;
+  .el-avatar {
+    margin: 30px 0 0 0;
+  }
+
+  .el-aside::-webkit-scrollbar {
+    display: none;
+  }
+
+  .user_info {
+    margin-bottom: 25px;
+    text-align: center;
+  }
 }
 </style>

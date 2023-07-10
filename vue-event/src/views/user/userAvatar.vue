@@ -77,7 +77,6 @@ export default {
       // 更新图像成功
       return this.$message.success(res.message)
     }
-
   }
 }
 </script>
